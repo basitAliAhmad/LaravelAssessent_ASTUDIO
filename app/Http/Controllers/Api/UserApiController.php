@@ -7,13 +7,32 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UserApiController extends Controller
 {
     public function getAll(Request $request)
     {
         try {
-            $users = User::all();
+            $first_name = $request->query('first_name');
+            $gender = $request->query('gender');
+            $date_of_birth = $request->query('date_of_birth');
+
+            $query = User::query();
+
+            if ($first_name) {
+                $query->where('first_name', $first_name);
+            }
+
+            if ($gender) {
+                $query->where('gender', $gender);
+            }
+
+            if ($date_of_birth) {
+                $query->whereDate('date_of_birth', $date_of_birth);
+            }
+
+            $users = $query->get();
             return response()->json([
                 'status' => true,
                 'message' => 'OK',
